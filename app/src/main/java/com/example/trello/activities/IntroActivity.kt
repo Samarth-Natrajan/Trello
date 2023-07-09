@@ -1,11 +1,10 @@
-package com.example.trello
+package com.example.trello.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
 import com.example.trello.databinding.ActivityIntroBinding
-import com.example.trello.databinding.ActivitySignUpBinding
 
 @Suppress ("DEPRECATION")
 class IntroActivity : AppCompatActivity() {
@@ -20,11 +19,11 @@ class IntroActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         binding?.btnSignUpIntro?.setOnClickListener {
-            val intent = Intent(this@IntroActivity,SignUpActivity::class.java)
+            val intent = Intent(this@IntroActivity, SignUpActivity::class.java)
             startActivity(intent)
         }
         binding?.btnSignInIntro?.setOnClickListener {
-            val intent = Intent(this@IntroActivity,SignInActivity::class.java)
+            val intent = Intent(this@IntroActivity, SignInActivity::class.java)
             startActivity(intent)
         }
 
