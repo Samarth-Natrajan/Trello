@@ -9,6 +9,8 @@ import android.view.WindowManager
 import android.widget.Toast
 import com.example.trello.databinding.ActivitySignInBinding
 import com.example.trello.databinding.ActivitySignUpBinding
+import com.example.trello.firebase.FirestoreClass
+import com.example.trello.models.User
 import com.google.firebase.auth.FirebaseAuth
 
 @Suppress ("DEPRECATION")
@@ -51,9 +53,7 @@ class SignInActivity : BaseActivity() {
                 task ->
                 hideProgressDialog()
                 if(task.isSuccessful){
-                    Log.d("signin","signInwithEmail:success")
-                    val user = auth.currentUser
-                    startActivity(Intent(this@SignInActivity,MainActivity::class.java))
+                    FirestoreClass().signInUser(this)
                 }
                 else{
                     Log.w("signin","sigin with email:Failure",task.exception)
@@ -77,5 +77,12 @@ class SignInActivity : BaseActivity() {
                 true
             }
         }
+    }
+
+    fun signInSuccess(loggedInUser: User?) {
+        hideProgressDialog()
+        startActivity(Intent(this@SignInActivity,MainActivity::class.java))
+        finish()
+
     }
 }

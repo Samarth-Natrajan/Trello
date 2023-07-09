@@ -14,7 +14,7 @@
         <activity
             android:name=".BaseActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            />
         <activity
             android:name=".activities.SignInActivity"
             android:exported="false"

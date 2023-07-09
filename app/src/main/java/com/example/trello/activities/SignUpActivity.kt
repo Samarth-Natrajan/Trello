@@ -6,6 +6,8 @@ import android.text.TextUtils
 import android.view.WindowManager
 import android.widget.Toast
 import com.example.trello.databinding.ActivitySignUpBinding
+import com.example.trello.firebase.FirestoreClass
+import com.example.trello.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.ktx.Firebase
@@ -46,14 +48,11 @@ class SignUpActivity : BaseActivity() {
             showProgressDialog("Please Wait")
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password).addOnCompleteListener {
                 task ->
-                hideProgressDialog()
                 if(task.isSuccessful){
                     val firebaseUser : FirebaseUser = task.result!!.user!!
                     val registeredEmail = firebaseUser.email!!
-                    Toast.makeText(this,"${name} you have successfully registered the email address ${registeredEmail}",Toast.LENGTH_LONG).show()
-                    FirebaseAuth.getInstance().signOut()
-                    finish()
-
+                    val user = User(firebaseUser.uid,name,registeredEmail)
+                    FirestoreClass().registerUser(this@SignUpActivity,user)
 
                 }
                 else{
@@ -80,5 +79,12 @@ class SignUpActivity : BaseActivity() {
                 true
             }
         }
+    }
+
+    fun userRegisteredSuccess() {
+        Toast.makeText(this,"You have successfully registered",Toast.LENGTH_SHORT).show()
+        hideProgressDialog()
+        FirebaseAuth.getInstance().signOut()
+        finish()
     }
 }

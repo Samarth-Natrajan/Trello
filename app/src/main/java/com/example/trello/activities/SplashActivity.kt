@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.WindowManager
 import com.example.trello.R
+import com.example.trello.firebase.FirestoreClass
 
 @Suppress ("DEPRECATION")
 class SplashActivity : AppCompatActivity() {
@@ -19,9 +20,18 @@ class SplashActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this@SplashActivity, IntroActivity::class.java)
-            startActivity(intent)
-            finish()
+            var currentUserID = FirestoreClass().getCurrentUserID()
+            if(currentUserID.isNotEmpty()){
+                val intent = Intent(this@SplashActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+            else{
+                val intent = Intent(this@SplashActivity, IntroActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
         },2000)
     }
 }
