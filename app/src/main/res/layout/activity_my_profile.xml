@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.MyProfileActivity">
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.Trello.AppBarOverlay">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_my_profile_activity"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/colorprimary"
+            app:popupTheme="@style/Theme.Trello.PopupOverlay"
+            />
+    </com.google.android.material.appbar.AppBarLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ic_bg"
+        android:orientation="vertical">
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:elevation="10dp"
+            app:cardCornerRadius="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/user_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/user_place_holder"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp">
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/profileName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:hint="Name"
+                        android:backgroundTint="@color/white"
+                        android:textSize="16sp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp">
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/profileEmail"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Email"
+                        android:backgroundTint="@color/white"
+                        android:inputType="textEmailAddress"
+                        android:textSize="16sp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp">
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/profileMobile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/white"
+                        android:inputType="phone"
+                        android:hint="Mobile"
+                        android:textSize="16sp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <Button
+                    android:id="@+id/btn_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:text="UPDATE"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:layout_marginTop="30dp"
+
+                    android:background="@drawable/shape_button_rounded"
+                    app:backgroundTint="@null"
+
+                    />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+</LinearLayout>

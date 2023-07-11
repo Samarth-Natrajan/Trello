@@ -1,9 +1,7 @@
 package com.example.trello.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Gravity
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
@@ -13,12 +11,10 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.example.trello.R
 import com.example.trello.databinding.ActivityMainBinding
-import com.example.trello.databinding.AppBarMainBinding
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.User
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListener {
@@ -30,7 +26,7 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         setupActionBar()
         var nav = findViewById<NavigationView>(R.id.nav_view)
         nav.setNavigationItemSelectedListener(this)
-        FirestoreClass().signInUser(this)
+        FirestoreClass().loadUserData(this)
 
     }
     private fun setupActionBar(){
@@ -66,7 +62,10 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         var drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         when(item.itemId){
 
-            R.id.nav_myProfile -> {Toast.makeText(this@MainActivity,"My Profile",Toast.LENGTH_SHORT).show()}
+            R.id.nav_myProfile -> {
+                Toast.makeText(this@MainActivity,"My Profile",Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this@MainActivity,MyProfileActivity::class.java))
+            }
             R.id.nav_sign_out ->{
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this,IntroActivity::class.java)

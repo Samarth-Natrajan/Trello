@@ -1,6 +1,7 @@
 package com.example.trello.firebase
 import android.app.Activity
 import com.example.trello.activities.MainActivity
+import com.example.trello.activities.MyProfileActivity
 import com.example.trello.activities.SignInActivity
 import com.example.trello.activities.SignUpActivity
 import com.example.trello.models.User
@@ -8,7 +9,6 @@ import com.example.trello.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.ktx.Firebase
 
 class FirestoreClass {
     private val mFirestore = FirebaseFirestore.getInstance()
@@ -27,7 +27,7 @@ class FirestoreClass {
         }
         return currentUserID
     }
-    fun  signInUser(activity: Activity){
+    fun  loadUserData(activity: Activity){
         mFirestore.collection(Constants.USERS)
             .document(getCurrentUserID()).get().addOnSuccessListener {document ->
                 val loggedInUser = document.toObject(User::class.java)
@@ -37,6 +37,9 @@ class FirestoreClass {
                     }
                     is MainActivity ->{
                         activity.updateNavigationUserDetais(loggedInUser)
+                    }
+                    is MyProfileActivity ->{
+                        activity.setUserDataInUI(loggedInUser!!)
                     }
                 }
 
@@ -48,8 +51,11 @@ class FirestoreClass {
                     is MainActivity ->{
                         activity.hideProgressDialog()
                     }
+
                 }
             }
     }
 
 }
+
+

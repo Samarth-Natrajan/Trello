@@ -1,14 +1,12 @@
 package com.example.trello.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import com.example.trello.databinding.ActivitySignInBinding
-import com.example.trello.databinding.ActivitySignUpBinding
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.User
 import com.google.firebase.auth.FirebaseAuth
@@ -53,7 +51,7 @@ class SignInActivity : BaseActivity() {
                 task ->
                 hideProgressDialog()
                 if(task.isSuccessful){
-                    FirestoreClass().signInUser(this)
+                    FirestoreClass().loadUserData(this)
                 }
                 else{
                     Log.w("signin","sigin with email:Failure",task.exception)
