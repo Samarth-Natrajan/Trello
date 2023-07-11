@@ -20,6 +20,7 @@ class SplashActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         Handler(Looper.getMainLooper()).postDelayed({
+
             var currentUserID = FirestoreClass().getCurrentUserID()
             if(currentUserID.isNotEmpty()){
                 val intent = Intent(this@SplashActivity, MainActivity::class.java)

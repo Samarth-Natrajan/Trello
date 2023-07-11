@@ -17,4 +17,10 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+    <style name="Theme.Trello.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    </style>
+    <style name="Theme.Trello.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+
+    </style>
 </resources>
