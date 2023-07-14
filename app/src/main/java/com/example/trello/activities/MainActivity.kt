@@ -5,15 +5,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.trello.R
+import com.example.trello.adapters.BoardItemsAdapter
 import com.example.trello.databinding.ActivityMainBinding
 import com.example.trello.firebase.FirestoreClass
+import com.example.trello.models.Board
 import com.example.trello.models.User
 import com.example.trello.utils.Constants
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -24,6 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListener {
     companion object{
         const val MY_PROFILE_REQUEST:Int = 11
+        const val CREATE_BOARD_REQUEST_CODE:Int = 12
     }
     private lateinit var mUsername:String
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,11 +38,11 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         setupActionBar()
         var nav = findViewById<NavigationView>(R.id.nav_view)
         nav.setNavigationItemSelectedListener(this)
-        FirestoreClass().loadUserData(this)
+        FirestoreClass().loadUserData(this,true)
         val addbtn = findViewById<FloatingActionButton>(R.id.fab_create_board)
         addbtn.setOnClickListener {
             val intent = Intent(this,CreateBoardActivity::class.java).putExtra(Constants.NAME,mUsername)
-            startActivity(intent)
+            startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
         }
 
     }
@@ -90,12 +96,16 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         return true
     }
 
-    fun updateNavigationUserDetais(loggedInUser: User?) {
+    fun updateNavigationUserDetais(loggedInUser: User?,readBoardList: Boolean) {
         mUsername = loggedInUser?.name.toString()
         var userImage = findViewById<CircleImageView>(R.id.iv_user_image)
         Glide.with(this).load(loggedInUser?.image).centerCrop().placeholder(R.drawable.user_place_holder).into(userImage)
         var userName = findViewById<TextView>(R.id.tv_username)
         userName.text = loggedInUser?.name
+        if(readBoardList){
+            showProgressDialog("Please Wait...")
+            FirestoreClass().getBoardsList(this)
+        }
 
     }
 
@@ -104,8 +114,30 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         if(resultCode==Activity.RESULT_OK&&requestCode== MY_PROFILE_REQUEST){
             FirestoreClass().loadUserData(this)
         }
+        else if(resultCode == Activity.RESULT_OK&&requestCode== CREATE_BOARD_REQUEST_CODE){
+            FirestoreClass().getBoardsList(this)
+        }
         else{
             Log.e("Canceled","CAncelled")
+        }
+    }
+    fun populateBoardsListToUI(boardsList:ArrayList<Board>){
+        hideProgressDialog()
+        if(boardsList.size>0){
+            val tv_noboard = findViewById<TextView>(R.id.tv_no_boards_available)
+            val rv = findViewById<RecyclerView>(R.id.rv_boards_list)
+            rv.visibility = View.VISIBLE
+            tv_noboard.visibility = View.GONE
+            rv.layoutManager = LinearLayoutManager(this)
+            rv.setHasFixedSize(true)
+            val adapter = BoardItemsAdapter(this,boardsList)
+            rv.adapter = adapter
+        }
+        else{
+            val tv_noboard = findViewById<TextView>(R.id.tv_no_boards_available)
+            val rv = findViewById<RecyclerView>(R.id.rv_boards_list)
+            rv.visibility = View.GONE
+            tv_noboard.visibility = View.VISIBLE
         }
     }
 }
