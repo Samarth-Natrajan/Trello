@@ -15,23 +15,29 @@ import com.example.trello.R
 import com.example.trello.databinding.ActivityMainBinding
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.User
+import com.example.trello.utils.Constants
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import de.hdodenhof.circleimageview.CircleImageView
-
+@Suppress ("DEPRECATION")
 class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListener {
-    private var binding:ActivityMainBinding?=null
     companion object{
         const val MY_PROFILE_REQUEST:Int = 11
     }
+    private lateinit var mUsername:String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_main)
         setupActionBar()
         var nav = findViewById<NavigationView>(R.id.nav_view)
         nav.setNavigationItemSelectedListener(this)
         FirestoreClass().loadUserData(this)
+        val addbtn = findViewById<FloatingActionButton>(R.id.fab_create_board)
+        addbtn.setOnClickListener {
+            val intent = Intent(this,CreateBoardActivity::class.java).putExtra(Constants.NAME,mUsername)
+            startActivity(intent)
+        }
 
     }
     private fun setupActionBar(){
@@ -85,6 +91,7 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
     }
 
     fun updateNavigationUserDetais(loggedInUser: User?) {
+        mUsername = loggedInUser?.name.toString()
         var userImage = findViewById<CircleImageView>(R.id.iv_user_image)
         Glide.with(this).load(loggedInUser?.image).centerCrop().placeholder(R.drawable.user_place_holder).into(userImage)
         var userName = findViewById<TextView>(R.id.tv_username)

@@ -21,10 +21,11 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.IOException
-
+@Suppress ("DEPRECATION")
 class MyProfileActivity : BaseActivity() {
     private val pickImage = 100
     private var imageUri: Uri?=null
+
     private lateinit var mUserDetails:User
     private var mProfileImageUri:String=""
     private var binding:ActivityMyProfileBinding?=null
@@ -82,7 +83,11 @@ class MyProfileActivity : BaseActivity() {
                     //binding?.userImage?.setImageURI(imageUri)
                     var profilepic = findViewById<CircleImageView>(R.id.user_image)
                     try{
-                    Glide.with(this@MyProfileActivity).load(imageUri).centerCrop().placeholder(R.drawable.user_place_holder).into(profilepic)}
+                    Glide.with(this@MyProfileActivity)
+                        .load(imageUri)
+                        .centerCrop().placeholder(R.drawable.user_place_holder)
+                        .into(profilepic)
+                    }
                     catch (e:IOException){
                         e.printStackTrace()
                     }
@@ -91,9 +96,9 @@ class MyProfileActivity : BaseActivity() {
         }
     }
     private fun uploadUserImage(){
-        showProgressDialog("Please Wait")
+        showProgressDialog("Please Wait...")
         if(imageUri!=null){
-            val sRef : StorageReference = FirebaseStorage.getInstance().reference.child("UserImage"+System.currentTimeMillis()+"."+getFileExtension(imageUri))
+            val sRef : StorageReference = FirebaseStorage.getInstance().reference.child("UserImage"+System.currentTimeMillis()+"."+Constants.getFileExtension(this@MyProfileActivity,imageUri))
             sRef.putFile(imageUri!!).addOnSuccessListener {
                 taskSnapshot ->
                 Log.i("Firebase image url",taskSnapshot?.metadata?.reference?.downloadUrl?.toString().toString())
@@ -112,9 +117,9 @@ class MyProfileActivity : BaseActivity() {
             }
         }
     }
-    private fun getFileExtension(uri:Uri?):String?{
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(uri!!))
-    }
+//    private fun getFileExtension(uri:Uri?):String?{
+//        return MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(uri!!))
+//    }
     fun profileUpdateSuccess(){
         hideProgressDialog()
         setResult(Activity.RESULT_OK)
