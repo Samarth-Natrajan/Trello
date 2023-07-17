@@ -18,7 +18,6 @@ open class BoardItemsAdapter(private val context:Context,private var list: Array
         return MyViewHolder(
             LayoutInflater.from(context)
                 .inflate(R.layout.item_board,parent,false))
-
     }
 
     override fun getItemCount(): Int {
@@ -39,6 +38,10 @@ open class BoardItemsAdapter(private val context:Context,private var list: Array
                 }
             }
         }
+    }
+
+    fun setOnClickListener(onClickListener: OnClickListener) {
+        this.onClickListener = onClickListener
     }
 
     interface OnClickListener{

@@ -25,6 +25,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import de.hdodenhof.circleimageview.CircleImageView
+import java.text.ParsePosition
+
 @Suppress ("DEPRECATION")
 class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListener {
     companion object{
@@ -132,6 +134,14 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
             rv.setHasFixedSize(true)
             val adapter = BoardItemsAdapter(this,boardsList)
             rv.adapter = adapter
+
+            adapter.setOnClickListener(object: BoardItemsAdapter.OnClickListener{
+                override fun onClick(position: Int,model:Board){
+                    val intent = Intent(this@MainActivity,TaskListActivity::class.java)
+                    intent.putExtra(Constants.DOCUMENT_ID,model.documentId)
+                    startActivity(intent)
+                }
+            })
         }
         else{
             val tv_noboard = findViewById<TextView>(R.id.tv_no_boards_available)

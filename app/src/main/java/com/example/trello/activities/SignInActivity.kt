@@ -3,6 +3,8 @@ package com.example.trello.activities
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
@@ -27,6 +29,16 @@ class SignInActivity : BaseActivity() {
         )
         binding?.toolbarSignInActivity?.setNavigationOnClickListener{
             onBackPressedDispatcher.onBackPressed()
+        }
+        binding?.btnShow?.setOnClickListener {
+            if(binding?.btnShow?.text?.toString()=="SHOW"){
+                binding?.etPassword?.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                binding?.btnShow?.text = "HIDE"
+            }
+            else{
+                binding?.etPassword?.transformationMethod = PasswordTransformationMethod.getInstance()
+                binding?.btnShow?.text = "Show"
+            }
         }
         auth = FirebaseAuth.getInstance()
         binding?.btnSignIn?.setOnClickListener {

@@ -3,6 +3,8 @@ package com.example.trello.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.view.WindowManager
 import android.widget.Toast
 import com.example.trello.databinding.ActivitySignUpBinding
@@ -30,6 +32,16 @@ class SignUpActivity : BaseActivity() {
         binding?.btnSignUp?.setOnClickListener {
             registerUser()
         }
+        binding?.btnShow?.setOnClickListener {
+            if(binding?.btnShow?.text?.toString()=="SHOW"){
+                binding?.etPassword?.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                binding?.btnShow?.text = "HIDE"
+            }
+            else{
+                binding?.etPassword?.transformationMethod = PasswordTransformationMethod.getInstance()
+                binding?.btnShow?.text = "Show"
+            }
+        }
 
     }
     private fun setupActionBar(){
@@ -45,7 +57,7 @@ class SignUpActivity : BaseActivity() {
         val email = binding?.etEmail?.text?.toString()?.trim{it<=' '}.toString()
         val password = binding?.etPassword?.text?.toString().toString()
         if(validateForm(name,email,password)){
-            showProgressDialog("Please Wait")
+            showProgressDialog("Please Wait...")
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password).addOnCompleteListener {
                 task ->
                 if(task.isSuccessful){
@@ -56,6 +68,7 @@ class SignUpActivity : BaseActivity() {
 
                 }
                 else{
+                    hideProgressDialog()
                     Toast.makeText(this,task.exception?.message,Toast.LENGTH_LONG).show()
                 }
             }
