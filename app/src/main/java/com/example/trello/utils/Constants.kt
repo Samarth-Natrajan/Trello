@@ -12,6 +12,7 @@ object Constants {
     const val MOBILE:String = "mobile"
     const val ASSIGNED_TO:String = "assignedTo"
     const val DOCUMENT_ID:String = "documentId"
+    const val TASK_LIST:String = "taskList"
 
     fun getFileExtension(activity: Activity, uri: Uri?):String?{
         return MimeTypeMap.getSingleton().getExtensionFromMimeType(activity.contentResolver.getType(uri!!))
