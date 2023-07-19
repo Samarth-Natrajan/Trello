@@ -133,6 +133,57 @@ class FirestoreClass {
             }
     }
 
+    fun getAssignedMembersListDetails(activity: MembersActivity,assignedTo:ArrayList<String>){
+        mFirestore.collection(Constants.USERS).whereIn(Constants.ID,assignedTo).get().addOnSuccessListener {
+            document->
+            Log.e(activity.javaClass.simpleName,document.documents.toString())
+            val usersList:ArrayList<User> = ArrayList()
+            for(i in document.documents){
+                val user = i.toObject(User::class.java)
+                usersList.add(user!!)
+            }
+            activity.setUpMembersList(usersList)
+        }.addOnFailureListener{
+            e->
+            activity.hideProgressDialog()
+            Log.e(activity.javaClass.simpleName,"Error while creating",e)
+        }
+    }
+    fun getMemberDetails(activity: MembersActivity,email:String){
+        mFirestore.collection(Constants.USERS).whereEqualTo(Constants.EMAIL,email)
+            .get().addOnSuccessListener {
+                document ->
+                if(document.documents.size > 0){
+                    val user = document.documents[0].toObject(User::class.java)
+                    activity.memberDetails(user!!)
+                }
+                else{
+                    activity.hideProgressDialog()
+                    activity.showErrorSnackBar("No such Member Found!!")
+                }
+            }.addOnFailureListener { e->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,"Error while getting details",e
+                )
+            }
+    }
+    fun assignMemberToBoard(activity: MembersActivity,board: Board,user: User){
+        val assignedToHashMap= HashMap<String,Any>()
+        assignedToHashMap[Constants.ASSIGNED_TO] = board.assignedTo
+        mFirestore.collection(Constants.BOARDS).document(board.documentId)
+            .update(assignedToHashMap)
+            .addOnSuccessListener {
+                activity.memberAssignSuccess(user)
+            }.addOnFailureListener {e->
+                activity.hideProgressDialog()
+                Log.e(
+
+                    activity.javaClass.simpleName,"Error while getting details",e
+                )
+            }
+    }
+
 }
 
 
