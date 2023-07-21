@@ -6,6 +6,7 @@ import android.media.Image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Adapter
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -116,6 +117,15 @@ open class TaskListItemsAdapter(private val context: Context,private var list: A
             holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).setHasFixedSize(true)
             val adapter = CardListItemsAdapter(context,model.cards)
             holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).adapter = adapter
+            adapter.setOnClickListener(
+                object:CardListItemsAdapter.OnClickListener{
+                    override fun onClick(cardPosition: Int) {
+                        if(context is TaskListActivity){
+                            context.cardDetails(holder.adapterPosition, cardPosition)
+                        }
+                    }
+                }
+            )
         }
     }
     private fun Int.toDp():Int = (this/Resources.getSystem().displayMetrics.density).toInt()

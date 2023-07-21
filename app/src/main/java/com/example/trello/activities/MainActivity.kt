@@ -107,7 +107,9 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         if(readBoardList){
             showProgressDialog("Please Wait...")
             FirestoreClass().getBoardsList(this)
+
         }
+
 
     }
 

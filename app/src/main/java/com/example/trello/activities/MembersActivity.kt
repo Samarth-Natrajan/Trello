@@ -1,5 +1,6 @@
 package com.example.trello.activities
 
+import android.app.Activity
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -19,7 +20,7 @@ import com.example.trello.models.User
 import com.example.trello.utils.Constants
 
 class MembersActivity : BaseActivity() {
-
+    private var anyChangesMade:Boolean = false
     private lateinit var mBoardDetails:Board
     private lateinit var mAssignedMembersList:ArrayList<User>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +42,7 @@ class MembersActivity : BaseActivity() {
     fun memberAssignSuccess(user: User){
         hideProgressDialog()
         mAssignedMembersList.add(user)
+        anyChangesMade=true
         setUpMembersList(mAssignedMembersList)
     }
 
@@ -101,6 +103,13 @@ class MembersActivity : BaseActivity() {
             dialog.dismiss()
         }
         dialog.show()
+    }
+
+    override fun onBackPressed() {
+        if(anyChangesMade){
+            setResult(Activity.RESULT_OK)
+        }
+        super.onBackPressed()
     }
 
 }

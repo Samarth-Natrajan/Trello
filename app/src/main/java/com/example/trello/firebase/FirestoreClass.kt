@@ -53,7 +53,6 @@ class FirestoreClass {
                 Log.e(activity.javaClass.simpleName, "error while updating")
             }
     }
-
     fun getBoardsList(activity: MainActivity){
         mFirestore.collection(Constants.BOARDS).whereArrayContains(Constants.ASSIGNED_TO,getCurrentUserID())
             .get().addOnSuccessListener {
@@ -84,10 +83,12 @@ class FirestoreClass {
                     }
                     is MainActivity ->{
                         activity.updateNavigationUserDetais(loggedInUser,readBoardsList)
+                        activity//TODO
                     }
                     is MyProfileActivity ->{
                         activity.setUserDataInUI(loggedInUser!!)
                     }
+
                 }
 
             }.addOnFailureListener{
@@ -102,17 +103,25 @@ class FirestoreClass {
                 }
             }
     }
-    fun addUpdateTaskList(activity: TaskListActivity,board: Board){
+    fun addUpdateTaskList(activity: Activity,board: Board){
         val taskListHashMap = HashMap<String,Any>()
         taskListHashMap[Constants.TASK_LIST] = board.taskList
 
         mFirestore.collection(Constants.BOARDS).document(board.documentId).update(taskListHashMap)
             .addOnSuccessListener {
                 Log.e(activity.javaClass.simpleName,"TaskList Updated Successfully")
+                if(activity is TaskListActivity)
                 activity.addUpdateTaskListSuccess()
+                else if(activity is CardDetailsActivity){
+                    activity.addUpdateTaskListSuccess()
+                }
             }.addOnFailureListener{
                     e->
+                if(activity is TaskListActivity)
                 activity.hideProgressDialog()
+                else if(activity is CardDetailsActivity){
+                    activity.hideProgressDialog()
+                }
                 Log.e(activity.javaClass.simpleName,"Error while creating",e)
             }
     }

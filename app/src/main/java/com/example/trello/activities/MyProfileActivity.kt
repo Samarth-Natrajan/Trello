@@ -125,15 +125,23 @@ class MyProfileActivity : BaseActivity() {
         setResult(Activity.RESULT_OK)
         finish()
     }
+    fun boardUpdateNameSuccess(){
+        hideProgressDialog()
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
     private fun updateUserProfileData(){
         val userHashmap = HashMap<String,Any>()
+
         var change = false
         if(mProfileImageUri.isNotEmpty()&&mProfileImageUri!=mUserDetails.image){
             userHashmap[Constants.IMAGE] = mProfileImageUri
+
             change = true
         }
         if(binding?.profileName?.text?.toString().toString()!=mUserDetails.name){
             userHashmap[Constants.NAME] = binding?.profileName?.text?.toString().toString()
+            //userHashmap[Constants.CREATED_BY] = binding?.profileName?.text?.toString().toString()
             change = true
         }
         if(binding?.profileMobile?.text?.toString().toString()!=mUserDetails.mobile.toString()){
