@@ -83,7 +83,7 @@ class FirestoreClass {
                     }
                     is MainActivity ->{
                         activity.updateNavigationUserDetais(loggedInUser,readBoardsList)
-                        activity//TODO
+
                     }
                     is MyProfileActivity ->{
                         activity.setUserDataInUI(loggedInUser!!)
@@ -142,7 +142,7 @@ class FirestoreClass {
             }
     }
 
-    fun getAssignedMembersListDetails(activity: MembersActivity,assignedTo:ArrayList<String>){
+    fun getAssignedMembersListDetails(activity: Activity,assignedTo:ArrayList<String>){
         mFirestore.collection(Constants.USERS).whereIn(Constants.ID,assignedTo).get().addOnSuccessListener {
             document->
             Log.e(activity.javaClass.simpleName,document.documents.toString())
@@ -151,10 +151,18 @@ class FirestoreClass {
                 val user = i.toObject(User::class.java)
                 usersList.add(user!!)
             }
-            activity.setUpMembersList(usersList)
-        }.addOnFailureListener{
-            e->
-            activity.hideProgressDialog()
+            if(activity is MembersActivity)
+                activity.setUpMembersList(usersList)
+            else if(activity is TaskListActivity){
+                activity.boardMembersDetailsList(usersList)
+            }
+
+        }.addOnFailureListener{e->
+            if(activity is MembersActivity)
+                activity.hideProgressDialog()
+            else if(activity is TaskListActivity){
+                activity.hideProgressDialog()
+            }
             Log.e(activity.javaClass.simpleName,"Error while creating",e)
         }
     }

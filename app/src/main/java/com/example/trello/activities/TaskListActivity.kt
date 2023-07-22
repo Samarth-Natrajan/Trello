@@ -16,12 +16,15 @@ import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.Board
 import com.example.trello.models.Card
 import com.example.trello.models.Task
+import com.example.trello.models.User
 import com.example.trello.utils.Constants
 import java.text.FieldPosition
 
+@Suppress("DEPRECATION")
 class TaskListActivity : BaseActivity() {
     private lateinit var mBoardDetails:Board
     private lateinit var mBoardDocumentId:String
+    lateinit var mAssignedMembersDetailsList:ArrayList<User>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_list)
@@ -65,7 +68,9 @@ class TaskListActivity : BaseActivity() {
         intent.putExtra(Constants.BOARD_DETAIL,mBoardDetails)
         intent.putExtra(Constants.TASK_LIST_ITEM_POSITION,taskListPosition)
         intent.putExtra(Constants.CARD_LIST_ITEM_POSITION,cardPosition)
+        intent.putExtra(Constants.BOARD_MEMBERS_LIST,mAssignedMembersDetailsList)
         startActivityForResult(intent, CARD_DETAILS_REQUEST_CODE)
+
     }
     fun addUpdateTaskListSuccess(){
         hideProgressDialog()
@@ -114,18 +119,32 @@ class TaskListActivity : BaseActivity() {
         showProgressDialog("Please Wait...")
         FirestoreClass().addUpdateTaskList(this,mBoardDetails)
     }
+    fun boardMembersDetailsList(list:ArrayList<User>){
+        mAssignedMembersDetailsList=list
+        hideProgressDialog()
+        val addTaskList = Task("Add List")
+        mBoardDetails.taskList.add(addTaskList)
+        val rv:RecyclerView = findViewById(R.id.rv_task_list)
+        rv.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        rv.setHasFixedSize(true)
+        val adapter = TaskListItemsAdapter(this,mBoardDetails.taskList)
+        rv.adapter=adapter
+    }
 
     fun boardDetails(board: Board){
         mBoardDetails = board
         hideProgressDialog()
         setupActionBar()
-        val addTaskList = Task("Add List")
-        board.taskList.add(addTaskList)
-        val rv:RecyclerView = findViewById(R.id.rv_task_list)
-        rv.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
-        rv.setHasFixedSize(true)
-        val adapter = TaskListItemsAdapter(this,board.taskList)
-        rv.adapter=adapter
+//        val addTaskList = Task("Add List")
+//        board.taskList.add(addTaskList)
+//        val rv:RecyclerView = findViewById(R.id.rv_task_list)
+//        rv.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+//        rv.setHasFixedSize(true)
+//        val adapter = TaskListItemsAdapter(this,board.taskList)
+//        rv.adapter=adapter
+        showProgressDialog("Please Wait...")
+        FirestoreClass().getAssignedMembersListDetails(this,mBoardDetails.assignedTo)
+
     }
     private fun setupActionBar(){
         var actbar: Toolbar = findViewById(R.id.toolbar_task_list_activity)

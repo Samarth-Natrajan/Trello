@@ -7,18 +7,21 @@ import java.text.ParseException
 data class Card(
     val name:String = "",
     val createdBy:String="",
-    val assignedTo:ArrayList<String> = ArrayList()
+    val assignedTo:ArrayList<String> = ArrayList(),
+    val labelcolor:String =""
 ):Parcelable {
     constructor(source: Parcel) : this(
         source.readString()!!,
         source.readString()!!,
-        source.createStringArrayList()!!
+        source.createStringArrayList()!!,
+        source.readString()!!
     )
     
     override fun writeToParcel(source: Parcel, flags: Int) {
         source.writeString(name)
         source.writeString(createdBy)
         source.writeStringList(assignedTo)
+        source.writeString(labelcolor)
     }
 
     override fun describeContents(): Int {

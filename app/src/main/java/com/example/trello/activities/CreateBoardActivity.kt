@@ -56,6 +56,7 @@ class CreateBoardActivity : BaseActivity() {
         binding?.btnCreate?.setOnClickListener {
             if(imageUri!=null){
                 uploadBoardImage()
+
             }
             else{
                 showProgressDialog("Please Wait...")
