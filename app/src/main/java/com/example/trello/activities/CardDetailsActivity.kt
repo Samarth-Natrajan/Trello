@@ -2,6 +2,7 @@ package com.example.trello.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -25,6 +26,9 @@ import com.example.trello.adapters.LabelColorListItemsAdapter
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.*
 import com.example.trello.utils.Constants
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 @Suppress("DEPRECATION")
 class CardDetailsActivity : BaseActivity() {
@@ -33,6 +37,7 @@ class CardDetailsActivity : BaseActivity() {
     private var mcardlistposition = -1
     private var mSelectedColor:String=""
     private lateinit var mMembersDetailsList:ArrayList<User>
+    private var mSelectedDueDateMilliSeconds:Long=0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_card_details)
@@ -52,6 +57,16 @@ class CardDetailsActivity : BaseActivity() {
         }
         findViewById<TextView>(R.id.tv_select_members).setOnClickListener {
             membersListDialog()
+        }
+        mSelectedDueDateMilliSeconds = mBoardDetails.taskList[mtasklistposition].cards[mcardlistposition].dueDate
+        if(mSelectedDueDateMilliSeconds>0){
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+            val selectedDate = simpleDateFormat.format(Date(mSelectedDueDateMilliSeconds))
+            findViewById<TextView>(R.id.tv_select_due_date).text = selectedDate
+        }
+        findViewById<TextView>(R.id.tv_select_due_date).setOnClickListener {
+            showDatePicker()
+
         }
 
         var name_card = findViewById<EditText>(R.id.et_name_card_details)
@@ -118,7 +133,7 @@ class CardDetailsActivity : BaseActivity() {
             name.text.toString(),
             mBoardDetails.taskList[mtasklistposition].cards[mcardlistposition].createdBy,
             mBoardDetails.taskList[mtasklistposition].cards[mcardlistposition].assignedTo
-            ,mSelectedColor
+            ,mSelectedColor,mSelectedDueDateMilliSeconds
         )
         val taskList:ArrayList<Task> = mBoardDetails.taskList
         taskList.removeAt(taskList.size-1)
@@ -253,5 +268,25 @@ class CardDetailsActivity : BaseActivity() {
             findViewById<TextView>(R.id.tv_select_members).visibility = View.VISIBLE
             findViewById<RecyclerView>(R.id.rv_selected_members_list).visibility = View.GONE
         }
+    }
+    private fun showDatePicker(){
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+        val dpd = DatePickerDialog(this,
+            { view,year,monthOfYear,dayOfMonth->
+                val sDayOfMonth =
+                    if(dayOfMonth<10) "0$dayOfMonth" else "$dayOfMonth"
+                val sMonthOfYear =
+                    if(monthOfYear+1<10) "0${monthOfYear+1}" else "${monthOfYear+1}"
+                val selectedDate = "$sDayOfMonth/$sMonthOfYear/$year"
+                findViewById<TextView>(R.id.tv_select_due_date).text = selectedDate
+                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                val theDate = sdf.parse(selectedDate)
+                mSelectedDueDateMilliSeconds = theDate!!.time
+                },year,month,day
+            )
+        dpd.show()
     }
 }
