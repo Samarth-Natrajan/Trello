@@ -1,7 +1,9 @@
 package com.example.trello.activities
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -23,7 +25,12 @@ import com.example.trello.models.User
 import com.example.trello.utils.Constants
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.android.play.integrity.internal.t
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.provider.FirebaseInitProvider
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.ParsePosition
 
@@ -34,18 +41,33 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
         const val CREATE_BOARD_REQUEST_CODE:Int = 12
     }
     private lateinit var mUsername:String
+    private lateinit var mSharedPreferences: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupActionBar()
         var nav = findViewById<NavigationView>(R.id.nav_view)
         nav.setNavigationItemSelectedListener(this)
+
+        mSharedPreferences = this.getSharedPreferences(Constants.TRELLO_PREFERENCES, Context.MODE_PRIVATE)
+        val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED,false)
+        if(tokenUpdated){
+            showProgressDialog("Please Wait...")
+            FirestoreClass().loadUserData(this,true)
+        }
+        else{
+            FirebaseMessaging.getInstance().token.addOnSuccessListener(this@MainActivity) {
+                updateFcmToken(it)
+            }
+        }
+
         FirestoreClass().loadUserData(this,true)
         val addbtn = findViewById<FloatingActionButton>(R.id.fab_create_board)
         addbtn.setOnClickListener {
             val intent = Intent(this,CreateBoardActivity::class.java).putExtra(Constants.NAME,mUsername)
             startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
         }
+
 
     }
     private fun setupActionBar(){
@@ -88,6 +110,7 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
             }
             R.id.nav_sign_out ->{
                 FirebaseAuth.getInstance().signOut()
+                mSharedPreferences.edit().clear().apply()
                 val intent = Intent(this,IntroActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
@@ -99,6 +122,7 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
     }
 
     fun updateNavigationUserDetais(loggedInUser: User?,readBoardList: Boolean) {
+        hideProgressDialog()
         mUsername = loggedInUser?.name.toString()
         var userImage = findViewById<CircleImageView>(R.id.iv_user_image)
         Glide.with(this).load(loggedInUser?.image).centerCrop().placeholder(R.drawable.user_place_holder).into(userImage)
@@ -151,5 +175,20 @@ class MainActivity : BaseActivity(),NavigationView.OnNavigationItemSelectedListe
             rv.visibility = View.GONE
             tv_noboard.visibility = View.VISIBLE
         }
+    }
+
+    fun tokenUpdateSuccess() {
+        hideProgressDialog()
+        val editor :SharedPreferences.Editor = mSharedPreferences.edit()
+        editor.putBoolean(Constants.FCM_TOKEN_UPDATED,true)
+        editor.apply()
+        showProgressDialog("Please Wait...")
+        FirestoreClass().loadUserData(this,true)
+    }
+    private fun updateFcmToken(token:String){
+        val userHashMap = HashMap<String,Any>()
+        userHashMap[Constants.FCM_TOKEN] = token
+        showProgressDialog("Please Wait...")
+        FirestoreClass().updateUserProfileData(this,userHashMap)
     }
 }
