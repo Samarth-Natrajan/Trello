@@ -10,8 +10,8 @@
     android:orientation="vertical">
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_user_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="image"
